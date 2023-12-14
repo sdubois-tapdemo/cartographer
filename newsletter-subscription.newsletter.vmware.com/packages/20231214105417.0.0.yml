@@ -1,0 +1,33 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: newsletter-subscription.newsletter.vmware.com.20231214105417.0.0+build.54ec007
+spec:
+  refName: newsletter-subscription.newsletter.vmware.com
+  version: 20231214105417.0.0+build.54ec007
+  releaseNotes: |
+    Release v20231214105417.0.0+build.54ec007 of package newsletter-subscription.newsletter.vmware.com
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: harbor.apps.tapmc.tanzudemohub.com/tap-supply-chain-basic/newsletter-subscription-newsletter-bundle@sha256:b07e9ef3e651e720dc26803e05ae56f3ba480eb73dfad4f16492814772b31750
+      template:
+      - ytt:
+          paths:
+          - .
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        workload_name:
+          type: string
+          default: ""
+
