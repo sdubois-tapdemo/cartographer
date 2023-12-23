@@ -1,0 +1,33 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: newsletter-subscription.newsletter-gitops.vmware.com.20231223163530.0.0+build.1c32140
+spec:
+  refName: newsletter-subscription.newsletter-gitops.vmware.com
+  version: 20231223163530.0.0+build.1c32140
+  releaseNotes: |
+    Release v20231223163530.0.0+build.1c32140 of package newsletter-subscription.newsletter-gitops.vmware.com
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: harbor.apps.tap.tanzudemohub.com/tap-supply-chain-basic/newsletter-subscription-newsletter-gitops-bundle@sha256:1d39fbf572779d56cd1340894fd28e65f2d5a86a1efe87d400310cfa29bdbba9
+      template:
+      - ytt:
+          paths:
+          - .
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        workload_name:
+          type: string
+          default: ""
+
