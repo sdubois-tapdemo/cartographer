@@ -1,17 +1,31 @@
-apiVersion: serving.knative.dev/v1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: newsletter-subscription
   annotations:
+    kapp.k14s.io/update-strategy: fallback-on-replace
     ootb.apps.tanzu.vmware.com/servicebinding-workload: "true"
-    ootb.apps.tanzu.vmware.com/apidescriptor-ref: "true"
     kapp.k14s.io/change-rule: upsert after upserting servicebinding.io/ServiceBindings
   labels:
     app.kubernetes.io/part-of: newsletter
-    apps.tanzu.vmware.com/workload-type: web
+    apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/component: run
     carto.run/workload-name: newsletter-subscription
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: run
+      app.kubernetes.io/part-of: newsletter
+      apps.tanzu.vmware.com/auto-configure-actuators: "false"
+      apps.tanzu.vmware.com/workload-type: server
+      carto.run/workload-name: newsletter-subscription
+      conventions.carto.run/framework: spring-boot
+      services.conventions.carto.run/postgres: workload
+      tanzu.app.live.view: "true"
+      tanzu.app.live.view.application.actuator.path: actuator
+      tanzu.app.live.view.application.actuator.port: "8080"
+      tanzu.app.live.view.application.flavours: spring-boot
+      tanzu.app.live.view.application.name: newsletter-subscription
   template:
     metadata:
       annotations:
@@ -31,13 +45,13 @@ spec:
           spring-boot-convention/service-intent-postgres
         developer.conventions/target-containers: workload
         kubectl.kubernetes.io/last-applied-configuration: |
-          {"apiVersion":"carto.run/v1alpha1","kind":"Workload","metadata":{"annotations":{},"labels":{"app.kubernetes.io/part-of":"newsletter","apps.tanzu.vmware.com/workload-type":"web"},"name":"newsletter-subscription","namespace":"newsletter-regops"},"spec":{"build":{"env":[{"name":"BP_JVM_VERSION","value":"20"}]},"params":[{"name":"gitops_ssh_secret","value":"github-ssh-secret"},{"name":"gitops_server_address","value":"https://github.com/"},{"name":"gitops_repository_owner","value":"sdubois-tapdemo"},{"name":"gitops_repository_name","value":"cartographer"}],"serviceClaims":[{"name":"db","ref":{"apiVersion":"services.apps.tanzu.vmware.com/v1alpha1","kind":"ClassClaim","name":"newsletter-db"}}],"source":{"git":{"ref":{"branch":"main"},"url":"https://github.com/sdubois-tapdemo/newsletter"},"subPath":"newsletter-subscription"}}}
+          {"apiVersion":"carto.run/v1alpha1","kind":"Workload","metadata":{"annotations":{},"labels":{"app.kubernetes.io/part-of":"newsletter","apps.tanzu.vmware.com/workload-type":"server"},"name":"newsletter-subscription","namespace":"newsletter-regops"},"spec":{"build":{"env":[{"name":"BP_JVM_VERSION","value":"20"}]},"params":[{"name":"gitops_ssh_secret","value":"github-ssh-secret"},{"name":"gitops_server_address","value":"https://github.com/"},{"name":"gitops_repository_owner","value":"sdubois-tapdemo"},{"name":"gitops_repository_name","value":"cartographer"}],"serviceClaims":[{"name":"db","ref":{"apiVersion":"services.apps.tanzu.vmware.com/v1alpha1","kind":"ClassClaim","name":"newsletter-db"}}],"source":{"git":{"ref":{"branch":"main"},"url":"https://github.com/sdubois-tapdemo/newsletter"},"subPath":"newsletter-subscription"}}}
         services.conventions.carto.run/postgres: postgresql/42.6.0
       labels:
         app.kubernetes.io/component: run
         app.kubernetes.io/part-of: newsletter
         apps.tanzu.vmware.com/auto-configure-actuators: "false"
-        apps.tanzu.vmware.com/workload-type: web
+        apps.tanzu.vmware.com/workload-type: server
         carto.run/workload-name: newsletter-subscription
         conventions.carto.run/framework: spring-boot
         services.conventions.carto.run/postgres: workload
@@ -82,4 +96,32 @@ spec:
             port: 8080
             scheme: HTTP
       serviceAccountName: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: newsletter-subscription
+  labels:
+    app.kubernetes.io/part-of: newsletter
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/component: run
+    carto.run/workload-name: newsletter-subscription
+spec:
+  selector:
+    app.kubernetes.io/component: run
+    app.kubernetes.io/part-of: newsletter
+    apps.tanzu.vmware.com/auto-configure-actuators: "false"
+    apps.tanzu.vmware.com/workload-type: server
+    carto.run/workload-name: newsletter-subscription
+    conventions.carto.run/framework: spring-boot
+    services.conventions.carto.run/postgres: workload
+    tanzu.app.live.view: "true"
+    tanzu.app.live.view.application.actuator.path: actuator
+    tanzu.app.live.view.application.actuator.port: "8080"
+    tanzu.app.live.view.application.flavours: spring-boot
+    tanzu.app.live.view.application.name: newsletter-subscription
+  ports:
+  - targetPort: 8080
+    port: 8080
+    name: http
 

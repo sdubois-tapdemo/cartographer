@@ -19,11 +19,11 @@ metadata:
   name: newsletter-subscription-db
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"carto.run/v1alpha1","kind":"Workload","metadata":{"annotations":{},"labels":{"app.kubernetes.io/part-of":"newsletter","apps.tanzu.vmware.com/workload-type":"web"},"name":"newsletter-subscription","namespace":"newsletter-regops"},"spec":{"build":{"env":[{"name":"BP_JVM_VERSION","value":"20"}]},"params":[{"name":"gitops_ssh_secret","value":"github-ssh-secret"},{"name":"gitops_server_address","value":"https://github.com/"},{"name":"gitops_repository_owner","value":"sdubois-tapdemo"},{"name":"gitops_repository_name","value":"cartographer"}],"serviceClaims":[{"name":"db","ref":{"apiVersion":"services.apps.tanzu.vmware.com/v1alpha1","kind":"ClassClaim","name":"newsletter-db"}}],"source":{"git":{"ref":{"branch":"main"},"url":"https://github.com/sdubois-tapdemo/newsletter"},"subPath":"newsletter-subscription"}}}
+      {"apiVersion":"carto.run/v1alpha1","kind":"Workload","metadata":{"annotations":{},"labels":{"app.kubernetes.io/part-of":"newsletter","apps.tanzu.vmware.com/workload-type":"server"},"name":"newsletter-subscription","namespace":"newsletter-regops"},"spec":{"build":{"env":[{"name":"BP_JVM_VERSION","value":"20"}]},"params":[{"name":"gitops_ssh_secret","value":"github-ssh-secret"},{"name":"gitops_server_address","value":"https://github.com/"},{"name":"gitops_repository_owner","value":"sdubois-tapdemo"},{"name":"gitops_repository_name","value":"cartographer"}],"serviceClaims":[{"name":"db","ref":{"apiVersion":"services.apps.tanzu.vmware.com/v1alpha1","kind":"ClassClaim","name":"newsletter-db"}}],"source":{"git":{"ref":{"branch":"main"},"url":"https://github.com/sdubois-tapdemo/newsletter"},"subPath":"newsletter-subscription"}}}
     kapp.k14s.io/change-group: servicebinding.io/ServiceBindings
   labels:
     app.kubernetes.io/part-of: newsletter
-    apps.tanzu.vmware.com/workload-type: web
+    apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/component: run
     carto.run/workload-name: newsletter-subscription
 spec:
@@ -33,7 +33,7 @@ spec:
     kind: ClassClaim
     name: newsletter-db
   workload:
-    apiVersion: serving.knative.dev/v1
-    kind: Service
+    apiVersion: apps/v1
+    kind: Deployment
     name: newsletter-subscription
 
