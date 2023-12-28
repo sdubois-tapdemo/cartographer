@@ -57,7 +57,9 @@ spec:
             path: /livez
             port: 8080
             scheme: HTTP
+          periodSeconds: 30
           initialDelaySeconds: 30
+          failureThreshold: 10
         name: workload
         ports:
         - containerPort: 8080
