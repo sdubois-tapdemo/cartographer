@@ -60,10 +60,6 @@ spec:
             path: /livez
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 100
-          periodSeconds: 120
-          terminationGracePeriodSeconds: 14
-          timeoutSeconds: 130
         name: workload
         ports:
         - containerPort: 8080
@@ -73,9 +69,6 @@ spec:
             path: /readyz
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 15
-          periodSeconds: 12
-          successThreshold: 3
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
