@@ -1,22 +1,21 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
+  name: newsletter-subscription
   annotations:
-    kapp.k14s.io/change-rule: upsert after upserting servicebinding.io/ServiceBindings
-    ootb.apps.tanzu.vmware.com/apidescriptor-ref: "true"
     ootb.apps.tanzu.vmware.com/servicebinding-workload: "true"
+    ootb.apps.tanzu.vmware.com/apidescriptor-ref: "true"
+    kapp.k14s.io/change-rule: upsert after upserting servicebinding.io/ServiceBindings
   labels:
     app.kubernetes.io/part-of: newsletter
     apps.tanzu.vmware.com/workload-type: web
     app.kubernetes.io/component: run
     carto.run/workload-name: newsletter-subscription
-  name: newsletter-subscription
 spec:
   template:
     metadata:
       annotations:
         apps.tanzu.vmware.com/correlationid: https://github.com/sdubois-tapdemo/newsletter?sub_path=newsletter-subscription
-        autoscaling.knative.dev/minScale: "1"
         boot.spring.io/version: 3.2.0
         conventions.carto.run/applied-conventions: |-
           appliveview-sample/app-live-view-appflavour-check
@@ -51,10 +50,7 @@ spec:
       containers:
       - env:
         - name: JAVA_TOOL_OPTIONS
-          value: -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.health.probes.enabled="true"
-            -Dserver.port="8080" -Dserver.shutdown.grace-period="24s"
-        - name: SERVICE_BINDING_ROOT
-          value: /bindings
+          value: -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.health.probes.enabled="true" -Dserver.port="8080" -Dserver.shutdown.grace-period="24s"
         image: harbor.apps.tap.tanzudemohub.com/tap-supply-chain-basic/newsletter-subscription-newsletter-regops@sha256:da5b0a5447ce5632d488d5a7dbdf3d2b79e330789210991da241608ccf92a028
         livenessProbe:
           httpGet:
@@ -86,3 +82,4 @@ spec:
             port: 8080
             scheme: HTTP
       serviceAccountName: default
+
