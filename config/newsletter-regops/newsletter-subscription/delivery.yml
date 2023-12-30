@@ -1,16 +1,16 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: newsletter-subscription
   annotations:
-    ootb.apps.tanzu.vmware.com/servicebinding-workload: "true"
-    ootb.apps.tanzu.vmware.com/apidescriptor-ref: "true"
     kapp.k14s.io/change-rule: upsert after upserting servicebinding.io/ServiceBindings
+    ootb.apps.tanzu.vmware.com/apidescriptor-ref: "true"
+    ootb.apps.tanzu.vmware.com/servicebinding-workload: "true"
   labels:
     app.kubernetes.io/part-of: newsletter
     apps.tanzu.vmware.com/workload-type: web
     app.kubernetes.io/component: run
     carto.run/workload-name: newsletter-subscription
+  name: newsletter-subscription
 spec:
   template:
     metadata:
@@ -86,5 +86,9 @@ spec:
           runAsUser: 1000
           seccompProfile:
             type: RuntimeDefault
+        startupProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+            scheme: HTTP
       serviceAccountName: default
-
